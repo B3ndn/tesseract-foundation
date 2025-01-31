@@ -28,7 +28,7 @@
       overflow-y: auto;
       position: relative;
       z-index: 10;
-      padding: 2rem;
+      padding: 2rem 4rem; /* Increased padding for better spacing */
       background-color: #faf9f7; /* Match background */
     }
     /* Canvas Section */
@@ -36,6 +36,7 @@
       flex: 1; /* Allocate remaining space to canvas */
       position: relative;
       background-color: #faf9f7; /* Match background */
+      overflow: hidden; /* Prevent canvas overflow */
     }
     #tesseract-canvas {
       width: 100%;
@@ -57,7 +58,7 @@
     <!-- Content Section -->
     <div class="content">
       <!-- Navigation Bar -->
-      <nav class="px-12 py-6 flex justify-start items-center space-x-8">
+      <nav class="flex justify-start items-center space-x-8">
         <a href="#about" class="text-gray-700 hover:text-gray-900">About</a>
         <a href="#grants" class="text-gray-700 hover:text-gray-900">Grants</a>
         <a href="#resources" class="text-gray-700 hover:text-gray-900">Resources</a>
@@ -68,7 +69,7 @@
       </nav>
 
       <!-- Main Content -->
-      <main class="pt-20 pb-32">
+      <main class="pt-12 pb-32">
         <div class="max-w-[650px]">
           <h1 class="text-5xl md:text-7xl font-light text-gray-900 mb-12 leading-tight tracking-tight whitespace-nowrap" style="font-variation-settings: 'wght' 350;">
             Tesseract Foundation
@@ -117,7 +118,7 @@
 
     // Define the tesseract vertices
     const vertices = [];
-    const size = 150; // Adjust size as needed
+    const size = 100; // Reduced size to fit within canvas
 
     for (let x = -1; x <= 1; x += 2) {
       for (let y = -1; y <= 1; y += 2) {
@@ -209,7 +210,7 @@
 
     // Projection from 4D to 3D
     function project4Dto3D(point) {
-      const distance = 500;
+      const distance = 300;
       const wFactor = distance / (distance - point.w);
       return {
         x: point.x * wFactor,
@@ -220,7 +221,7 @@
 
     // Projection from 3D to 2D
     function project3Dto2D(point) {
-      const distance = 500;
+      const distance = 400;
       const zFactor = distance / (distance - point.z);
       return {
         x: point.x * zFactor + canvas.width / 2,
@@ -252,12 +253,12 @@
       });
 
       // Increment rotation angles (slowed down)
-      angleXY += 0.0025; // Slowed from 0.005 to 0.0025
-      angleXZ += 0.002;
-      angleXW += 0.0015;
-      angleYZ += 0.0025;
-      angleYW += 0.002;
-      angleZW += 0.0015;
+      angleXY += 0.001; // Slowed from 0.0025
+      angleXZ += 0.001;
+      angleXW += 0.00075;
+      angleYZ += 0.001;
+      angleYW += 0.001;
+      angleZW += 0.00075;
 
       requestAnimationFrame(animate);
     }
