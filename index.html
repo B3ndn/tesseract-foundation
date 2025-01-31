@@ -38,6 +38,8 @@
       background-color: #faf9f7; /* Match background */
       overflow: hidden; /* Prevent canvas overflow */
       padding: 1rem; /* Added internal padding */
+      /* Shift the canvas slightly to the right */
+      margin-left: 2rem;
     }
     #tesseract-canvas {
       width: 100%;
@@ -60,10 +62,10 @@
     <div class="content">
       <!-- Navigation Bar -->
       <nav class="flex justify-start items-center space-x-8">
-        <a href="#about" class="text-gray-700 hover:text-gray-900 text-lg">About</a>
-        <a href="#grants" class="text-gray-700 hover:text-gray-900 text-lg">Grants</a>
-        <a href="#resources" class="text-gray-700 hover:text-gray-900 text-lg">Resources</a>
-        <a href="#team" class="text-gray-700 hover:text-gray-900 text-lg">Team</a>
+        <a href="#about" class="text-gray-700 hover:text-gray-900 text-base">About</a>
+        <a href="#grants" class="text-gray-700 hover:text-gray-900 text-base">Grants</a>
+        <a href="#resources" class="text-gray-700 hover:text-gray-900 text-base">Resources</a>
+        <a href="#team" class="text-gray-700 hover:text-gray-900 text-base">Team</a>
         <button class="ml-6 px-6 py-2 bg-white border border-gray-200 text-gray-800 hover:bg-gray-100 text-sm tracking-wide">
           CONTACT US
         </button>
@@ -72,22 +74,22 @@
       <!-- Main Content -->
       <main class="pt-12 pb-32">
         <div class="max-w-[650px]">
-          <h1 class="text-6xl md:text-8xl font-light text-gray-900 mb-12 leading-tight tracking-tight whitespace-nowrap" style="font-variation-settings: 'wght' 350;">
+          <h1 class="text-5xl md:text-7xl font-light text-gray-900 mb-12 leading-tight tracking-tight whitespace-nowrap" style="font-variation-settings: 'wght' 350;">
             Tesseract Foundation
           </h1>
           
-          <p class="text-2xl text-gray-700 leading-relaxed mb-16">
+          <p class="text-xl text-gray-700 leading-relaxed mb-16">
             Through bold philanthropy and rigorous research, we aim to protect and promote humanity's long-term future. 
             We focus on identifying and supporting projects that are critical to our species' future trajectory yet currently neglected.
           </p>
 
           <div class="space-y-6">
-            <a href="#mission" class="group flex items-center text-2xl text-gray-800 hover:text-gray-600 transition-colors">
+            <a href="#mission" class="group flex items-center text-xl text-gray-800 hover:text-gray-600 transition-colors">
               <span class="mr-4 text-blue-500 transform group-hover:translate-x-1 transition-transform">›</span>
               Our mission and methodology
             </a>
             
-            <a href="#history" class="group flex items-center text-2xl text-gray-800 hover:text-gray-600 transition-colors">
+            <a href="#history" class="group flex items-center text-xl text-gray-800 hover:text-gray-600 transition-colors">
               <span class="mr-4 text-blue-500 transform group-hover:translate-x-1 transition-transform">›</span>
               View our grant-making history
             </a>
@@ -232,7 +234,7 @@
     function resizeCanvas(){
         canvas.width = canvas.clientWidth;
         canvas.height = canvas.clientHeight;
-        size = (canvas.width / 5) * 0.85; // Slightly reduced size multiplier from 0.9 to 0.85
+        size = (canvas.width / 5) * 0.8; // Further reduced size multiplier from 0.85 to 0.8
         generateVertices();
         generateEdges();
     }
@@ -263,13 +265,13 @@
             ctx.stroke();
         });
 
-        // Increment rotation angles (slowed down further)
-        angleXY += 0.0003; // Further slowed down
-        angleXZ += 0.0002;
-        angleXW += 0.00015;
-        angleYZ += 0.0003;
-        angleYW += 0.0002;
-        angleZW += 0.00015;
+        // Increment rotation angles (slightly increased for faster spin)
+        angleXY += 0.0004; // Increased from 0.0003 to 0.0004
+        angleXZ += 0.00025; // Increased from 0.0002 to 0.00025
+        angleXW += 0.0002; // Increased from 0.00015 to 0.0002
+        angleYZ += 0.0004; // Increased from 0.0003 to 0.0004
+        angleYW += 0.00025; // Increased from 0.0002 to 0.00025
+        angleZW += 0.0002; // Increased from 0.00015 to 0.0002
 
         requestAnimationFrame(animate);
     }
@@ -279,5 +281,3 @@
   </script>
 </body>
 </html>
-
-
