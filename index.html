@@ -14,6 +14,7 @@
       padding: 0;
       height: 100%;
       overflow: hidden;
+      background-color: #faf9f7; /* Ensure the background matches */
     }
     /* Flex Container to hold content and canvas side by side */
     .container {
@@ -23,18 +24,18 @@
     }
     /* Content Section */
     .content {
-      flex: 1;
+      flex: 2; /* Allocate more space to content */
       overflow-y: auto;
       position: relative;
       z-index: 10;
       padding: 2rem;
-      background-color: #faf9f7;
+      background-color: #faf9f7; /* Match background */
     }
     /* Canvas Section */
     .canvas-container {
-      flex: 1;
+      flex: 1; /* Allocate remaining space to canvas */
       position: relative;
-      background-color: transparent;
+      background-color: #faf9f7; /* Match background */
     }
     #tesseract-canvas {
       width: 100%;
@@ -116,7 +117,7 @@
 
     // Define the tesseract vertices
     const vertices = [];
-    const size = 200; // Increased size for better visibility
+    const size = 150; // Adjust size as needed
 
     for (let x = -1; x <= 1; x += 2) {
       for (let y = -1; y <= 1; y += 2) {
@@ -251,12 +252,12 @@
       });
 
       // Increment rotation angles (slowed down)
-      angleXY += 0.005; // Previously 0.01
-      angleXZ += 0.004;
-      angleXW += 0.003;
-      angleYZ += 0.005;
-      angleYW += 0.004;
-      angleZW += 0.003;
+      angleXY += 0.0025; // Slowed from 0.005 to 0.0025
+      angleXZ += 0.002;
+      angleXW += 0.0015;
+      angleYZ += 0.0025;
+      angleYW += 0.002;
+      angleZW += 0.0015;
 
       requestAnimationFrame(animate);
     }
@@ -266,3 +267,4 @@
   </script>
 </body>
 </html>
+
