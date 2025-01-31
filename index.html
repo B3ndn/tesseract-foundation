@@ -78,9 +78,14 @@
             Tesseract Foundation
           </h1>
           
-          <p class="text-xl text-gray-700 leading-relaxed mb-16">
+          <p class="text-xl text-gray-700 leading-relaxed mb-4">
             Through bold philanthropy and rigorous research, we aim to protect and promote humanity's long-term future. 
             We focus on identifying and supporting projects that are critical to our species' future trajectory yet currently neglected.
+          </p>
+          
+          <!-- New Sentence Added Below -->
+          <p class="text-red-500 text-sm mb-16">
+            The website is a work in progress. Click <a href="mailto:ben_dnorman@icloud.com" class="underline hover:text-red-700">here</a> to contact us.
           </p>
 
           <div class="space-y-6">
@@ -234,7 +239,7 @@
     function resizeCanvas(){
         canvas.width = canvas.clientWidth;
         canvas.height = canvas.clientHeight;
-        size = (canvas.width / 5) * 0.8; // Further reduced size multiplier from 0.85 to 0.8
+        size = (canvas.width / 5) * 0.75; // Further reduced size multiplier from 0.8 to 0.75
         generateVertices();
         generateEdges();
     }
@@ -245,8 +250,8 @@
     // Animation loop
     function animate(){
         ctx.clearRect(0,0, canvas.width, canvas.height);
-        ctx.strokeStyle = '#3B82F6'; // Blue color
-        ctx.lineWidth =2;
+        ctx.strokeStyle = '#1D4ED8'; // Darker Blue for higher contrast
+        ctx.lineWidth = 3; // Increased line width for better visibility
 
         // Rotate and project all vertices
         const projected = vertices.map(v => {
@@ -266,12 +271,12 @@
         });
 
         // Increment rotation angles (slightly increased for faster spin)
-        angleXY += 0.0004; // Increased from 0.0003 to 0.0004
-        angleXZ += 0.00025; // Increased from 0.0002 to 0.00025
-        angleXW += 0.0002; // Increased from 0.00015 to 0.0002
-        angleYZ += 0.0004; // Increased from 0.0003 to 0.0004
-        angleYW += 0.00025; // Increased from 0.0002 to 0.00025
-        angleZW += 0.0002; // Increased from 0.00015 to 0.0002
+        angleXY += 0.0005; // Increased from 0.0004 to 0.0005
+        angleXZ += 0.0003; // Increased from 0.00025 to 0.0003
+        angleXW += 0.00025; // Increased from 0.0002 to 0.00025
+        angleYZ += 0.0005; // Increased from 0.0004 to 0.0005
+        angleYW += 0.0003; // Increased from 0.00025 to 0.0003
+        angleZW += 0.00025; // Increased from 0.0002 to 0.00025
 
         requestAnimationFrame(animate);
     }
