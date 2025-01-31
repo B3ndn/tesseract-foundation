@@ -108,7 +108,7 @@
     const ctx = canvas.getContext('2d');
 
     // Initialize variables
-    let size = 150; // Initial size, will be updated based on canvas size
+    let size = 100; // Slightly reduced size
     let vertices = [];
     let edges = [];
 
@@ -124,9 +124,9 @@
     function generateVertices(){
         vertices = [];
         for (let x = -1; x <=1; x+=2){
-            for (let y=-1; y <=1; y+=2){
-                for (let z=-1; z <=1; z+=2){
-                    for (let w=-1; w <=1; w+=2){
+            for (let y = -1; y <=1; y+=2){
+                for (let z = -1; z <=1; z+=2){
+                    for (let w = -1; w <=1; w+=2){
                         vertices.push({x: x * size, y: y * size, z: z * size, w: w * size});
                     }
                 }
@@ -208,7 +208,7 @@
 
     // Projection from 4D to 3D
     function project4Dto3D(point){
-        const distance = size * 2.5; // Increased scaling to prevent clipping
+        const distance = size * 3; // Adjusted for better fit
         const wFactor = distance / (distance - point.w);
         return {
             x: point.x * wFactor,
@@ -219,7 +219,7 @@
 
     // Projection from 3D to 2D
     function project3Dto2D(point){
-        const distance = size * 2.5;
+        const distance = size * 3;
         const zFactor = distance / (distance - point.z);
         return {
             x: point.x * zFactor + canvas.width / 2,
@@ -231,7 +231,7 @@
     function resizeCanvas(){
         canvas.width = canvas.clientWidth;
         canvas.height = canvas.clientHeight;
-        size = canvas.width /4; // Adjust size based on canvas width
+        size = canvas.width / 5; // Adjust size based on canvas width
         generateVertices();
         generateEdges();
     }
@@ -278,4 +278,3 @@
   </script>
 </body>
 </html>
-
