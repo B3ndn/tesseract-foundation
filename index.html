@@ -5,7 +5,7 @@
   <title>Tesseract Foundation</title>
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Set Tailwind configuration if needed -->
+  <!-- Tailwind Configuration (Optional) -->
   <script>
     tailwind.config = {
       theme: {
@@ -16,19 +16,23 @@
   </script>
   <!-- Responsive Meta Tag -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <!-- Optional: Add any additional styles here -->
+  <!-- Custom Styles (Optional) -->
   <style>
-    /* Optional: Custom styles can go here */
+    body, html {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+    }
   </style>
 </head>
-<body class="min-h-screen bg-[#faf9f7] relative overflow-hidden">
+<body class="min-h-screen bg-[#faf9f7] relative">
   <!-- Root Div for React -->
   <div id="root"></div>
 
   <!-- React and ReactDOM CDN -->
   <script src="https://unpkg.com/react@17/umd/react.development.js" crossorigin></script>
   <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js" crossorigin></script>
-  <!-- Babel CDN for JSX transformation -->
+  <!-- Babel CDN for JSX Transformation -->
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
   <!-- Your React Code -->
@@ -46,7 +50,7 @@
 
         const generateVertices = () => {
           const vertices = [];
-          const size = 100; // Adjusted size for better visibility
+          const size = 200; // Adjusted size for better visibility
           for (let x = -1; x <= 1; x += 2) {
             for (let y = -1; y <= 1; y += 2) {
               for (let z = -1; z <= 1; z += 2) {
@@ -98,7 +102,7 @@
 
         const project4dto3d = (point) => {
           const distance = 2;
-          const w = 1 / (distance - point.w / 100);
+          const w = 1 / (distance - point.w / 200); // Adjusted for new size
           return {
             x: point.x * w,
             y: point.y * w,
@@ -108,7 +112,7 @@
 
         const project3dto2d = (point) => {
           const distance = 5;
-          const z = 1 / (distance - point.z / 100);
+          const z = 1 / (distance - point.z / 200); // Adjusted for new size
           return {
             x: point.x * z,
             y: point.y * z
@@ -141,7 +145,7 @@
               if (Math.abs(v1.w - v2.w) > 0.1) diffCount++;
 
               if (diffCount === 1) {
-                ctx.globalAlpha = 0.4 - (vertices[i].w + vertices[j].w) / 2000;
+                ctx.globalAlpha = 0.4 - (v1.w + v2.w) / 2000;
                 ctx.beginPath();
                 ctx.moveTo(projectedVertices[i].x + center.x, projectedVertices[i].y + center.y);
                 ctx.lineTo(projectedVertices[j].x + center.x, projectedVertices[j].y + center.y);
@@ -206,15 +210,12 @@
           <AnimatedTesseract />
           <BackgroundGrid />
           
-          <nav className="px-12 py-6 flex justify-between items-center relative">
-            <div className="invisible w-20" />
-            <div className="absolute left-1/4 right-1/4 flex justify-between px-8">
-              <a href="#about" className="text-gray-700 hover:text-gray-900">About</a>
-              <a href="#grants" className="text-gray-700 hover:text-gray-900">Grants</a>
-              <a href="#resources" className="text-gray-700 hover:text-gray-900">Resources</a>
-              <a href="#team" className="text-gray-700 hover:text-gray-900">Team</a>
-            </div>
-            <button className="px-6 py-2 bg-white border border-gray-200 text-gray-800 hover:bg-gray-100 text-sm tracking-wide">
+          <nav className="px-12 py-6 flex justify-start items-center relative space-x-4">
+            <a href="#about" className="text-gray-700 hover:text-gray-900">About</a>
+            <a href="#grants" className="text-gray-700 hover:text-gray-900">Grants</a>
+            <a href="#resources" className="text-gray-700 hover:text-gray-900">Resources</a>
+            <a href="#team" className="text-gray-700 hover:text-gray-900">Team</a>
+            <button className="ml-4 px-6 py-2 bg-white border border-gray-200 text-gray-800 hover:bg-gray-100 text-sm tracking-wide">
               CONTACT US
             </button>
           </nav>
