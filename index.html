@@ -109,7 +109,7 @@
     const ctx = canvas.getContext('2d');
 
     // Initialize variables
-    let size = 50; // Slightly reduced size for better fit
+    let size = 100; // Slightly reduced size for better fit
     let vertices = [];
     let edges = [];
 
@@ -232,7 +232,7 @@
     function resizeCanvas(){
         canvas.width = canvas.clientWidth;
         canvas.height = canvas.clientHeight;
-        size = (canvas.width / 5) * 0.95; // Slightly reduced size to prevent clipping
+        size = (canvas.width / 5) * 0.9; // Slightly reduced size to prevent clipping
         generateVertices();
         generateEdges();
     }
@@ -263,7 +263,7 @@
             ctx.stroke();
         });
 
-        // Increment rotation angles (slowed down)
+        // Increment rotation angles (slowed down further)
         angleXY += 0.0003; // Further slowed down
         angleXZ += 0.0002;
         angleXW += 0.00015;
