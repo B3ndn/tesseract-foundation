@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Tesseract Foundation</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Ensure Tailwind is configured to include all necessary classes -->
+  <style>
+    /* Optional: Custom styles can go here */
+  </style>
+</head>
+<body class="min-h-screen bg-[#faf9f7] relative">
+  <!-- Root div for React -->
+  <div id="root"></div>
+
+  <!-- React and ReactDOM CDN -->
+  <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+  <!-- Babel CDN for JSX transpilation -->
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <!-- Your React Code -->
+  <script type="text/babel">
+    const { useEffect, useRef } = React;
+
+    const AnimatedTesseract = () => {
+      const canvasRef = useRef(null);
+      
+      useEffect(() => {
+        const canvas = canvasRef.current;
+        const ctx = canvas.getContext('2d');
+        let animationFrameId;
+        let rotations = { xy: 0, xz: 0, xw: 0, yz: 0, yw: 0, zw: 0 };
+
+        const generateVertices = () => {
+          const vertices = [];
+          const size = 800; // Much larger size
+          for (let x = -1; x <= 1; x += 2) {
+            for (let y = -1; y <= 1; y += 2) {
+              for (let z = -1; z <= 1; z += 2) {
+                for (let w = -1; w <= 1; w += 2) {
+                  vertices.push({ x: x * size, y: y * size, z: z * size, w: w * size });
+                }
+              }
+            }
+          }
+          return vertices;
+        };
+
+        const rotate4d = (point) => {
+          let { x, y, z, w } = point;
+          let temp;
+
+          temp = x;
+          x = x * Math.cos(rotations.xy) - y * Math.sin(rotations.xy);
+          y = temp * Math.sin(rotations.xy) + y * Math.cos(rotations.xy);
+
+          temp = x;
+          x = x * Math.cos(rotations.xz) - z * Math.sin(rotations.xz);
+          z = temp * Math.sin(rotations.xz) + z * Math.cos(rotations.xz);
+
+          temp = x;
+          x = x * Math.cos(rotations.xw) - w * Math.sin(rotations.xw);
+          w = temp * Math.sin(rotations.xw) + w * Math.cos(rotations.xw);
+
+          temp = y;
+          y = y * Math.cos(rotations.yz) - z * Math.sin(rotations.yz);
+          z = temp * Math.sin(rotations.yz) + z * Math.cos(rotations.yz);
+
+          temp = y;
+          y = y * Math.cos(rotations.yw) - w * Math.sin(rotations.yw);
+          w = temp * Math.sin(rotations.yw) + w * Math.cos(rotations.yw);
+
+          temp = z;
+          z = z * Math.cos(rotations.zw) - w * Math.sin(rotations.zw);
+          w = temp * Math.sin(rotations.zw) + w * Math.cos(rotations.zw);
+
+          return { x, y, z, w };
+        };
+
+        const project4dto3d = (point) => {
+          const distance = 2;
+          const w = 1 / (distance - point.w / 1000); // Adjusted for new size
+          return {
+            x: point.x * w,
+            y: point.y * w,
+            z: point.z * w
+          };
+        };
+
+        const project3dto2d = (point) => {
+          const distance = 5;
+          const z = 1 / (distance - point.z / 1000); // Adjusted for new size
+          return {
+            x: point.x * z,
+            y: point.y * z
+          };
+        };
+
+        const drawTesseract = () => {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          const vertices = generateVertices();
+          const center = { x: canvas.width / 2, y: canvas.height / 2 };
+
+          const projectedVertices = vertices.map(vertex => {
+            const rotated = rotate4d(vertex);
+            const projected3d = project4dto3d(rotated);
+            return project3dto2d(projected3d);
+          });
+
+          ctx.lineWidth = 2; // Thicker lines
+          ctx.strokeStyle = '#3B82F6';
+
+          for (let i = 0; i < vertices.length; i++) {
+            for (let j = i + 1; j < vertices.length; j++) {
+              const v1 = vertices[i];
+              const v2 = vertices[j];
+              
+              let diffCount = 0;
+              if (Math.abs(v1.x - v2.x) > 0.1) diffCount++;
+              if (Math.abs(v1.y - v2.y) > 0.1) diffCount++;
+              if (Math.abs(v1.z - v2.z) > 0.1) diffCount++;
+              if (Math.abs(v1.w - v2.w) > 0.1) diffCount++;
+
+              if (diffCount === 1) {
+                ctx.globalAlpha = 0.4 - (vertices[i].w + vertices[j].w) / 2000;
+                ctx.beginPath();
+                ctx.moveTo(projectedVertices[i].x + center.x, projectedVertices[i].y + center.y);
+                ctx.lineTo(projectedVertices[j].x + center.x, projectedVertices[j].y + center.y);
+                ctx.stroke();
+              }
+            }
+          }
+
+          rotations.xy += 0.002;
+          rotations.xz += 0.001;
+          rotations.xw += 0.001;
+          rotations.yz += 0.001;
+          rotations.yw += 0.001;
+          rotations.zw += 0.001;
+
+          animationFrameId = requestAnimationFrame(drawTesseract);
+        };
+
+        drawTesseract();
+        return () => cancelAnimationFrame(animationFrameId);
+      }, []);
+
+      return (
+        <canvas 
+          ref={canvasRef}
+          width={3200}
+          height={3200}
+          className="w-[3200px] h-[3200px]"
+          style={{
+            position: 'absolute',
+            left: '50%',
+            top: '50%',
+            transform: 'translate(-50%, -50%)',
+            pointerEvents: 'none',
+            opacity: 0.8,
+            zIndex: -1
+          }}
+        />
+      );
+    };
+
+    const BackgroundGrid = () => (
+      <div className="fixed top-0 left-0 w-full h-full -z-10">
+        <div className="absolute left-1/4 top-0 h-full w-px bg-gray-200"/>
+        <div className="absolute left-1/2 top-0 h-full w-px bg-gray-200"/>
+        <div className="absolute left-3/4 top-0 h-full w-px bg-gray-200"/>
+        <svg className="absolute top-0 right-0 w-2/3 h-full" preserveAspectRatio="none">
+          <path
+            d="M0,0 C 200,100 400,200 800,250"
+            stroke="#E5E7EB"
+            strokeWidth="1"
+            fill="none"
+            className="opacity-30"
+          />
+        </svg>
+      </div>
+    );
+
+    const Website = () => {
+      return (
+        <div className="min-h-screen bg-[#faf9f7] relative">
+          <AnimatedTesseract />
+          <BackgroundGrid />
+          
+          <nav className="px-12 py-6 flex justify-between items-center relative">
+            <div className="invisible w-20" />
+            <div className="absolute left-1/4 right-1/4 flex justify-between px-8">
+              <a href="#about" className="text-gray-700 hover:text-gray-900">About</a>
+              <a href="#grants" className="text-gray-700 hover:text-gray-900">Grants</a>
+              <a href="#resources" className="text-gray-700 hover:text-gray-900">Resources</a>
+              <a href="#team" className="text-gray-700 hover:text-gray-900">Team</a>
+            </div>
+            <button className="px-6 py-2 bg-white border border-gray-200 text-gray-800 hover:bg-gray-100 text-sm tracking-wide">
+              CONTACT US
+            </button>
+          </nav>
+
+          <main className="px-12 pt-20 pb-32 relative">
+            <div className="max-w-[650px]">
+              <h1 className="text-7xl font-light text-gray-900 mb-12 leading-tight tracking-tight whitespace-nowrap" style={{
+                fontVariationSettings: "'wght' 350"
+              }}>
+                Tesseract Foundation
+              </h1>
+              
+              <p className="text-xl text-gray-700 leading-relaxed mb-16">
+                Through philanthropy and research, we aim to protect and promote humanity's long-term future. 
+                Our work focuses on addressing global challenges and opportunities that will shape the trajectory 
+                of human civilization, ensuring a prosperous and sustainable future for generations to come.
+              </p>
+
+              <div className="space-y-6">
+                <a href="#mission" className="group flex items-center text-xl text-gray-800 hover:text-gray-600 transition-colors">
+                  <span className="mr-4 text-blue-500 transform group-hover:translate-x-1 transition-transform">›</span>
+                  Our mission and methodology
+                </a>
+                
+                <a href="#history" className="group flex items-center text-xl text-gray-800 hover:text-gray-600 transition-colors">
+                  <span className="mr-4 text-blue-500 transform group-hover:translate-x-1 transition-transform">›</span>
+                  View our grant-making history
+                </a>
+              </div>
+            </div>
+          </main>
+        </div>
+      );
+    };
+
+    // Render the Website component into the root div
+    ReactDOM.createRoot(document.getElementById('root')).render(<Website />);
+  </script>
+</body>
+</html>
