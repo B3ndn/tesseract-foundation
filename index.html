@@ -52,6 +52,8 @@
         const resizeCanvas = () => {
           canvas.width = window.innerWidth;
           canvas.height = window.innerHeight;
+          // Regenerate vertices on resize to maintain proportional size
+          vertices = generateVertices();
         };
 
         // Initial resize
@@ -63,10 +65,10 @@
         let animationFrameId;
         let rotations = { xy: 0, xz: 0, xw: 0, yz: 0, yw: 0, zw: 0 };
 
-        // Generate vertices once based on current canvas size
+        // Generate vertices based on current canvas size
         const generateVertices = () => {
           const vertices = [];
-          const size = Math.min(canvas.width, canvas.height) / 4; // Adjust size based on viewport
+          const size = Math.min(canvas.width, canvas.height) / 4; // Responsive size
           for (let x = -1; x <= 1; x += 2) {
             for (let y = -1; y <= 1; y += 2) {
               for (let z = -1; z <= 1; z += 2) {
@@ -79,7 +81,7 @@
           return vertices;
         };
 
-        const vertices = generateVertices(); // Generate once
+        let vertices = generateVertices(); // Generate once
 
         const rotate4d = (point) => {
           let { x, y, z, w } = point;
@@ -120,7 +122,7 @@
 
         const project4dto3d = (point) => {
           const distance = 2;
-          const w = 1 / (distance - point.w / 1000); // Adjusted for new size
+          const w = 1 / (distance - point.w / 1000); // Perspective projection
           return {
             x: point.x * w,
             y: point.y * w,
@@ -130,7 +132,7 @@
 
         const project3dto2d = (point) => {
           const distance = 5;
-          const z = 1 / (distance - point.z / 1000); // Adjusted for new size
+          const z = 1 / (distance - point.z / 1000); // Perspective projection
           return {
             x: point.x * z,
             y: point.y * z
