@@ -66,9 +66,10 @@
         <a href="#grants" class="text-gray-700 hover:text-gray-900 text-base">Grants</a>
         <a href="#resources" class="text-gray-700 hover:text-gray-900 text-base">Resources</a>
         <a href="#team" class="text-gray-700 hover:text-gray-900 text-base">Team</a>
-        <button class="ml-6 px-6 py-2 bg-white border border-gray-200 text-gray-800 hover:bg-gray-100 text-sm tracking-wide">
+        <!-- Updated CONTACT US Button to Mailto Link -->
+        <a href="mailto:ben_dnorman@icloud.com" class="ml-6 px-6 py-2 bg-white border border-gray-200 text-gray-800 hover:bg-gray-100 text-sm tracking-wide">
           CONTACT US
-        </button>
+        </a>
       </nav>
 
       <!-- Main Content -->
@@ -239,7 +240,7 @@
     function resizeCanvas(){
         canvas.width = canvas.clientWidth;
         canvas.height = canvas.clientHeight;
-        size = (canvas.width / 5) * 0.75; // Further reduced size multiplier from 0.8 to 0.75
+        size = (canvas.width / 5) * 0.7; // Further reduced size multiplier from 0.75 to 0.7
         generateVertices();
         generateEdges();
     }
@@ -250,8 +251,8 @@
     // Animation loop
     function animate(){
         ctx.clearRect(0,0, canvas.width, canvas.height);
-        ctx.strokeStyle = '#1D4ED8'; // Darker Blue for higher contrast
-        ctx.lineWidth = 3; // Increased line width for better visibility
+        ctx.strokeStyle = '#3B82F6'; // Reverted to original Blue color
+        ctx.lineWidth = 3; // Maintained increased line width for better visibility
 
         // Rotate and project all vertices
         const projected = vertices.map(v => {
