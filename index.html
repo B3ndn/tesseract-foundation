@@ -109,7 +109,7 @@
     const ctx = canvas.getContext('2d');
 
     // Initialize variables
-    let size = 100; // Slightly reduced size for better fit
+    let size = 100; // Initial size
     let vertices = [];
     let edges = [];
 
@@ -232,7 +232,7 @@
     function resizeCanvas(){
         canvas.width = canvas.clientWidth;
         canvas.height = canvas.clientHeight;
-        size = (canvas.width / 5) * 0.9; // Slightly reduced size to prevent clipping
+        size = (canvas.width / 5) * 0.7; // Reduced size multiplier from 0.9 to 0.7
         generateVertices();
         generateEdges();
     }
@@ -279,4 +279,5 @@
   </script>
 </body>
 </html>
+
 
