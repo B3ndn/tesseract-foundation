@@ -28,12 +28,12 @@
       overflow-y: auto;
       position: relative;
       z-index: 10;
-      padding: 2rem 4rem; /* Increased padding for better spacing */
+      padding: 3rem 6rem; /* Increased padding for better spacing */
       background-color: #faf9f7; /* Match background */
     }
     /* Canvas Section */
     .canvas-container {
-      flex: 1; /* Allocate remaining space to canvas */
+      flex: 3; /* Allocate more space to canvas */
       position: relative;
       background-color: #faf9f7; /* Match background */
       overflow: hidden; /* Prevent canvas overflow */
@@ -97,7 +97,7 @@
 
     <!-- Canvas Section -->
     <div class="canvas-container">
-      <canvas id="tesseract-canvas" width="800" height="800"></canvas>
+      <canvas id="tesseract-canvas"></canvas>
     </div>
   </div>
 
@@ -107,43 +107,10 @@
     const canvas = document.getElementById('tesseract-canvas');
     const ctx = canvas.getContext('2d');
 
-    // Set canvas dimensions based on its container
-    function resizeCanvas() {
-      canvas.width = canvas.clientWidth;
-      canvas.height = canvas.clientHeight;
-    }
-
-    window.addEventListener('resize', resizeCanvas);
-    resizeCanvas(); // Initial resize
-
-    // Define the tesseract vertices
-    const vertices = [];
-    const size = 100; // Reduced size to fit within canvas
-
-    for (let x = -1; x <= 1; x += 2) {
-      for (let y = -1; y <= 1; y += 2) {
-        for (let z = -1; z <= 1; z += 2) {
-          for (let w = -1; w <= 1; w += 2) {
-            vertices.push({x: x * size, y: y * size, z: z * size, w: w * size});
-          }
-        }
-      }
-    }
-
-    // Define the edges of the tesseract
-    const edges = [];
-    for (let i = 0; i < vertices.length; i++) {
-      for (let j = i + 1; j < vertices.length; j++) {
-        let diff = 0;
-        if (vertices[i].x !== vertices[j].x) diff++;
-        if (vertices[i].y !== vertices[j].y) diff++;
-        if (vertices[i].z !== vertices[j].z) diff++;
-        if (vertices[i].w !== vertices[j].w) diff++;
-        if (diff === 1) {
-          edges.push([i, j]);
-        }
-      }
-    }
+    // Initialize variables
+    let size = 150; // Initial size, will be updated based on canvas size
+    let vertices = [];
+    let edges = [];
 
     // Rotation angles
     let angleXY = 0;
@@ -153,114 +120,157 @@
     let angleYW = 0;
     let angleZW = 0;
 
+    // Function to generate vertices based on current size
+    function generateVertices(){
+        vertices = [];
+        for (let x = -1; x <=1; x+=2){
+            for (let y=-1; y <=1; y+=2){
+                for (let z=-1; z <=1; z+=2){
+                    for (let w=-1; w <=1; w+=2){
+                        vertices.push({x: x * size, y: y * size, z: z * size, w: w * size});
+                    }
+                }
+            }
+        }
+    }
+
+    // Function to generate edges based on vertices
+    function generateEdges(){
+        edges = [];
+        for (let i=0; i < vertices.length; i++){
+            for (let j=i+1; j < vertices.length; j++){
+                let diff =0;
+                if (vertices[i].x !== vertices[j].x) diff++;
+                if (vertices[i].y !== vertices[j].y) diff++;
+                if (vertices[i].z !== vertices[j].z) diff++;
+                if (vertices[i].w !== vertices[j].w) diff++;
+                if (diff ===1){
+                    edges.push([i,j]);
+                }
+            }
+        }
+    }
+
     // Function to rotate a point in 4D
-    function rotate4D(point) {
-      let {x, y, z, w} = point;
+    function rotate4D(point){
+        let {x, y, z, w} = point;
 
-      // XY rotation
-      let sinXY = Math.sin(angleXY);
-      let cosXY = Math.cos(angleXY);
-      let tempX = x * cosXY - y * sinXY;
-      let tempY = x * sinXY + y * cosXY;
-      x = tempX;
-      y = tempY;
+        // XY rotation
+        let sinXY = Math.sin(angleXY);
+        let cosXY = Math.cos(angleXY);
+        let tempX = x * cosXY - y * sinXY;
+        let tempY = x * sinXY + y * cosXY;
+        x = tempX;
+        y = tempY;
 
-      // XZ rotation
-      let sinXZ = Math.sin(angleXZ);
-      let cosXZ = Math.cos(angleXZ);
-      let tempX2 = x * cosXZ - z * sinXZ;
-      let tempZ = x * sinXZ + z * cosXZ;
-      x = tempX2;
-      z = tempZ;
+        // XZ rotation
+        let sinXZ = Math.sin(angleXZ);
+        let cosXZ = Math.cos(angleXZ);
+        let tempX2 = x * cosXZ - z * sinXZ;
+        let tempZ = x * sinXZ + z * cosXZ;
+        x = tempX2;
+        z = tempZ;
 
-      // XW rotation
-      let sinXW = Math.sin(angleXW);
-      let cosXW = Math.cos(angleXW);
-      let tempX3 = x * cosXW - w * sinXW;
-      let tempW = x * sinXW + w * cosXW;
-      x = tempX3;
-      w = tempW;
+        // XW rotation
+        let sinXW = Math.sin(angleXW);
+        let cosXW = Math.cos(angleXW);
+        let tempX3 = x * cosXW - w * sinXW;
+        let tempW = x * sinXW + w * cosXW;
+        x = tempX3;
+        w = tempW;
 
-      // YZ rotation
-      let sinYZ = Math.sin(angleYZ);
-      let cosYZ = Math.cos(angleYZ);
-      let tempY2 = y * cosYZ - z * sinYZ;
-      let tempZ2 = y * sinYZ + z * cosYZ;
-      y = tempY2;
-      z = tempZ2;
+        // YZ rotation
+        let sinYZ = Math.sin(angleYZ);
+        let cosYZ = Math.cos(angleYZ);
+        let tempY2 = y * cosYZ - z * sinYZ;
+        let tempZ2 = y * sinYZ + z * cosYZ;
+        y = tempY2;
+        z = tempZ2;
 
-      // YW rotation
-      let sinYW = Math.sin(angleYW);
-      let cosYW = Math.cos(angleYW);
-      let tempY3 = y * cosYW - w * sinYW;
-      let tempW2 = y * sinYW + w * cosYW;
-      y = tempY3;
-      w = tempW2;
+        // YW rotation
+        let sinYW = Math.sin(angleYW);
+        let cosYW = Math.cos(angleYW);
+        let tempY3 = y * cosYW - w * sinYW;
+        let tempW2 = y * sinYW + w * cosYW;
+        y = tempY3;
+        w = tempW2;
 
-      // ZW rotation
-      let sinZW = Math.sin(angleZW);
-      let cosZW = Math.cos(angleZW);
-      let tempZ3 = z * cosZW - w * sinZW;
-      let tempW3 = z * sinZW + w * cosZW;
-      z = tempZ3;
-      w = tempW3;
+        // ZW rotation
+        let sinZW = Math.sin(angleZW);
+        let cosZW = Math.cos(angleZW);
+        let tempZ3 = z * cosZW - w * sinZW;
+        let tempW3 = z * sinZW + w * cosZW;
+        z = tempZ3;
+        w = tempW3;
 
-      return {x, y, z, w};
+        return {x, y, z, w};
     }
 
     // Projection from 4D to 3D
-    function project4Dto3D(point) {
-      const distance = 300;
-      const wFactor = distance / (distance - point.w);
-      return {
-        x: point.x * wFactor,
-        y: point.y * wFactor,
-        z: point.z * wFactor
-      };
+    function project4Dto3D(point){
+        const distance = size * 2.5; // Increased scaling to prevent clipping
+        const wFactor = distance / (distance - point.w);
+        return {
+            x: point.x * wFactor,
+            y: point.y * wFactor,
+            z: point.z * wFactor
+        };
     }
 
     // Projection from 3D to 2D
-    function project3Dto2D(point) {
-      const distance = 400;
-      const zFactor = distance / (distance - point.z);
-      return {
-        x: point.x * zFactor + canvas.width / 2,
-        y: point.y * zFactor + canvas.height / 2
-      };
+    function project3Dto2D(point){
+        const distance = size * 2.5;
+        const zFactor = distance / (distance - point.z);
+        return {
+            x: point.x * zFactor + canvas.width / 2,
+            y: point.y * zFactor + canvas.height / 2
+        };
     }
 
+    // Function to resize canvas and regenerate vertices and edges
+    function resizeCanvas(){
+        canvas.width = canvas.clientWidth;
+        canvas.height = canvas.clientHeight;
+        size = canvas.width /4; // Adjust size based on canvas width
+        generateVertices();
+        generateEdges();
+    }
+
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas(); // Initial resize
+
     // Animation loop
-    function animate() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.strokeStyle = '#3B82F6'; // Blue color
-      ctx.lineWidth = 2;
+    function animate(){
+        ctx.clearRect(0,0, canvas.width, canvas.height);
+        ctx.strokeStyle = '#3B82F6'; // Blue color
+        ctx.lineWidth =2;
 
-      // Rotate and project all vertices
-      const projected = vertices.map(v => {
-        const rotated = rotate4D(v);
-        const projected3D = project4Dto3D(rotated);
-        const projected2D = project3Dto2D(projected3D);
-        return projected2D;
-      });
+        // Rotate and project all vertices
+        const projected = vertices.map(v => {
+            const rotated = rotate4D(v);
+            const projected3D = project4Dto3D(rotated);
+            const projected2D = project3Dto2D(projected3D);
+            return projected2D;
+        });
 
-      // Draw edges
-      edges.forEach(edge => {
-        const [start, end] = edge;
-        ctx.beginPath();
-        ctx.moveTo(projected[start].x, projected[start].y);
-        ctx.lineTo(projected[end].x, projected[end].y);
-        ctx.stroke();
-      });
+        // Draw edges
+        edges.forEach(edge => {
+            const [start, end] = edge;
+            ctx.beginPath();
+            ctx.moveTo(projected[start].x, projected[start].y);
+            ctx.lineTo(projected[end].x, projected[end].y);
+            ctx.stroke();
+        });
 
-      // Increment rotation angles (slowed down)
-      angleXY += 0.001; // Slowed from 0.0025
-      angleXZ += 0.001;
-      angleXW += 0.00075;
-      angleYZ += 0.001;
-      angleYW += 0.001;
-      angleZW += 0.00075;
+        // Increment rotation angles (slowed down)
+        angleXY += 0.0005; // Further slowed down
+        angleXZ += 0.0004;
+        angleXW += 0.0003;
+        angleYZ += 0.0005;
+        angleYW += 0.0004;
+        angleZW += 0.0003;
 
-      requestAnimationFrame(animate);
+        requestAnimationFrame(animate);
     }
 
     // Start animation
