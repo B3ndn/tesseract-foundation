@@ -37,6 +37,7 @@
       position: relative;
       background-color: #faf9f7; /* Match background */
       overflow: hidden; /* Prevent canvas overflow */
+      padding: 1rem; /* Added internal padding */
     }
     #tesseract-canvas {
       width: 100%;
@@ -108,7 +109,7 @@
     const ctx = canvas.getContext('2d');
 
     // Initialize variables
-    let size = 100; // Slightly reduced size
+    let size = 100; // Slightly reduced size for better fit
     let vertices = [];
     let edges = [];
 
@@ -231,7 +232,7 @@
     function resizeCanvas(){
         canvas.width = canvas.clientWidth;
         canvas.height = canvas.clientHeight;
-        size = canvas.width / 5; // Adjust size based on canvas width
+        size = (canvas.width / 5) * 0.95; // Slightly reduced size to prevent clipping
         generateVertices();
         generateEdges();
     }
@@ -263,12 +264,12 @@
         });
 
         // Increment rotation angles (slowed down)
-        angleXY += 0.0005; // Further slowed down
-        angleXZ += 0.0004;
-        angleXW += 0.0003;
-        angleYZ += 0.0005;
-        angleYW += 0.0004;
-        angleZW += 0.0003;
+        angleXY += 0.0003; // Further slowed down
+        angleXZ += 0.0002;
+        angleXW += 0.00015;
+        angleYZ += 0.0003;
+        angleYW += 0.0002;
+        angleZW += 0.00015;
 
         requestAnimationFrame(animate);
     }
@@ -278,3 +279,4 @@
   </script>
 </body>
 </html>
+
