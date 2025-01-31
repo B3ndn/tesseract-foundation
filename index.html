@@ -5,36 +5,30 @@
   <title>Tesseract Foundation</title>
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Optional: Tailwind Configuration -->
+  <!-- Set Tailwind configuration if needed -->
   <script>
     tailwind.config = {
       theme: {
-        extend: {
-          // You can add custom configurations here if needed
-        }
-      }
+        extend: {},
+      },
+      plugins: [],
     }
   </script>
+  <!-- Responsive Meta Tag -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Optional: Add any additional styles here -->
   <style>
-    /* Prevent scrollbars from appearing */
-    body, html {
-      margin: 0;
-      padding: 0;
-      overflow: hidden;
-    }
-    canvas {
-      display: block; /* Remove default inline behavior */
-    }
+    /* Optional: Custom styles can go here */
   </style>
 </head>
-<body class="min-h-screen bg-[#faf9f7] relative">
-  <!-- Root div for React -->
+<body class="min-h-screen bg-[#faf9f7] relative overflow-hidden">
+  <!-- Root Div for React -->
   <div id="root"></div>
 
   <!-- React and ReactDOM CDN -->
-  <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
-  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
-  <!-- Babel CDN for JSX transpilation -->
+  <script src="https://unpkg.com/react@17/umd/react.development.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js" crossorigin></script>
+  <!-- Babel CDN for JSX transformation -->
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
   <!-- Your React Code -->
@@ -43,32 +37,16 @@
 
     const AnimatedTesseract = () => {
       const canvasRef = useRef(null);
-
+      
       useEffect(() => {
         const canvas = canvasRef.current;
         const ctx = canvas.getContext('2d');
-
-        // Function to resize the canvas to fit the window
-        const resizeCanvas = () => {
-          canvas.width = window.innerWidth;
-          canvas.height = window.innerHeight;
-          // Regenerate vertices on resize to maintain proportional size
-          vertices = generateVertices();
-        };
-
-        // Initial resize
-        resizeCanvas();
-
-        // Resize canvas when window size changes
-        window.addEventListener('resize', resizeCanvas);
-
         let animationFrameId;
         let rotations = { xy: 0, xz: 0, xw: 0, yz: 0, yw: 0, zw: 0 };
 
-        // Generate vertices based on current canvas size
         const generateVertices = () => {
           const vertices = [];
-          const size = Math.min(canvas.width, canvas.height) / 4; // Responsive size
+          const size = 100; // Adjusted size for better visibility
           for (let x = -1; x <= 1; x += 2) {
             for (let y = -1; y <= 1; y += 2) {
               for (let z = -1; z <= 1; z += 2) {
@@ -81,38 +59,36 @@
           return vertices;
         };
 
-        let vertices = generateVertices(); // Generate once
-
         const rotate4d = (point) => {
           let { x, y, z, w } = point;
           let temp;
 
-          // Rotation XY
+          // XY rotation
           temp = x;
           x = x * Math.cos(rotations.xy) - y * Math.sin(rotations.xy);
           y = temp * Math.sin(rotations.xy) + y * Math.cos(rotations.xy);
 
-          // Rotation XZ
+          // XZ rotation
           temp = x;
           x = x * Math.cos(rotations.xz) - z * Math.sin(rotations.xz);
           z = temp * Math.sin(rotations.xz) + z * Math.cos(rotations.xz);
 
-          // Rotation XW
+          // XW rotation
           temp = x;
           x = x * Math.cos(rotations.xw) - w * Math.sin(rotations.xw);
           w = temp * Math.sin(rotations.xw) + w * Math.cos(rotations.xw);
 
-          // Rotation YZ
+          // YZ rotation
           temp = y;
           y = y * Math.cos(rotations.yz) - z * Math.sin(rotations.yz);
           z = temp * Math.sin(rotations.yz) + z * Math.cos(rotations.yz);
 
-          // Rotation YW
+          // YW rotation
           temp = y;
           y = y * Math.cos(rotations.yw) - w * Math.sin(rotations.yw);
           w = temp * Math.sin(rotations.yw) + w * Math.cos(rotations.yw);
 
-          // Rotation ZW
+          // ZW rotation
           temp = z;
           z = z * Math.cos(rotations.zw) - w * Math.sin(rotations.zw);
           w = temp * Math.sin(rotations.zw) + w * Math.cos(rotations.zw);
@@ -122,7 +98,7 @@
 
         const project4dto3d = (point) => {
           const distance = 2;
-          const w = 1 / (distance - point.w / 1000); // Perspective projection
+          const w = 1 / (distance - point.w / 100);
           return {
             x: point.x * w,
             y: point.y * w,
@@ -132,7 +108,7 @@
 
         const project3dto2d = (point) => {
           const distance = 5;
-          const z = 1 / (distance - point.z / 1000); // Perspective projection
+          const z = 1 / (distance - point.z / 100);
           return {
             x: point.x * z,
             y: point.y * z
@@ -141,6 +117,7 @@
 
         const drawTesseract = () => {
           ctx.clearRect(0, 0, canvas.width, canvas.height);
+          const vertices = generateVertices();
           const center = { x: canvas.width / 2, y: canvas.height / 2 };
 
           const projectedVertices = vertices.map(vertex => {
@@ -149,9 +126,8 @@
             return project3dto2d(projected3d);
           });
 
-          ctx.lineWidth = 2; // Thicker lines
+          ctx.lineWidth = 2;
           ctx.strokeStyle = '#3B82F6';
-          ctx.globalAlpha = 0.8; // Ensure lines are visible
 
           for (let i = 0; i < vertices.length; i++) {
             for (let j = i + 1; j < vertices.length; j++) {
@@ -165,9 +141,7 @@
               if (Math.abs(v1.w - v2.w) > 0.1) diffCount++;
 
               if (diffCount === 1) {
-                // Calculate global alpha based on w-values
-                const avgW = (v1.w + v2.w) / 2;
-                ctx.globalAlpha = 0.4 - avgW / 2000;
+                ctx.globalAlpha = 0.4 - (vertices[i].w + vertices[j].w) / 2000;
                 ctx.beginPath();
                 ctx.moveTo(projectedVertices[i].x + center.x, projectedVertices[i].y + center.y);
                 ctx.lineTo(projectedVertices[j].x + center.x, projectedVertices[j].y + center.y);
@@ -176,7 +150,6 @@
             }
           }
 
-          // Update rotations
           rotations.xy += 0.002;
           rotations.xz += 0.001;
           rotations.xw += 0.001;
@@ -188,22 +161,20 @@
         };
 
         drawTesseract();
-
-        // Cleanup on unmount
-        return () => {
-          cancelAnimationFrame(animationFrameId);
-          window.removeEventListener('resize', resizeCanvas);
-        };
+        return () => cancelAnimationFrame(animationFrameId);
       }, []);
 
       return (
         <canvas 
           ref={canvasRef}
+          width={800}
+          height={800}
           className="w-full h-full"
           style={{
-            position: 'fixed', // Fixed to viewport
-            top: 0,
-            left: 0,
+            position: 'absolute',
+            left: '50%',
+            top: '50%',
+            transform: 'translate(-50%, -50%)',
             pointerEvents: 'none',
             opacity: 0.8,
             zIndex: -1
@@ -235,40 +206,40 @@
           <AnimatedTesseract />
           <BackgroundGrid />
           
-          <nav className="px-6 py-4 flex justify-between items-center fixed top-0 left-0 right-0 z-20 bg-transparent">
-            <div className="flex-1">
-              <a href="#" className="text-xl font-semibold text-gray-700">Tesseract Foundation</a>
-            </div>
-            <div className="flex space-x-4">
+          <nav className="px-12 py-6 flex justify-between items-center relative">
+            <div className="invisible w-20" />
+            <div className="absolute left-1/4 right-1/4 flex justify-between px-8">
               <a href="#about" className="text-gray-700 hover:text-gray-900">About</a>
               <a href="#grants" className="text-gray-700 hover:text-gray-900">Grants</a>
               <a href="#resources" className="text-gray-700 hover:text-gray-900">Resources</a>
               <a href="#team" className="text-gray-700 hover:text-gray-900">Team</a>
             </div>
-            <button className="px-4 py-2 bg-white border border-gray-200 text-gray-800 hover:bg-gray-100 text-sm tracking-wide rounded">
+            <button className="px-6 py-2 bg-white border border-gray-200 text-gray-800 hover:bg-gray-100 text-sm tracking-wide">
               CONTACT US
             </button>
           </nav>
 
-          <main className="px-6 pt-24 pb-16 flex items-center justify-center">
-            <div className="max-w-2xl text-center">
-              <h1 className="text-4xl md:text-6xl font-light text-gray-900 mb-6 leading-tight tracking-tight">
+          <main className="px-12 pt-20 pb-32 relative">
+            <div className="max-w-[650px]">
+              <h1 className="text-5xl md:text-7xl font-light text-gray-900 mb-12 leading-tight tracking-tight whitespace-nowrap" style={{
+                fontVariationSettings: "'wght' 350"
+              }}>
                 Tesseract Foundation
               </h1>
               
-              <p className="text-lg md:text-xl text-gray-700 leading-relaxed mb-8">
+              <p className="text-xl text-gray-700 leading-relaxed mb-16">
                 Through bold philanthropy and rigorous research, we aim to protect and promote humanity's long-term future. 
                 We focus on identifying and supporting projects that are critical to our species' future trajectory yet currently neglected.
               </p>
 
-              <div className="space-y-4">
-                <a href="#mission" className="group flex items-center justify-center text-lg md:text-xl text-gray-800 hover:text-gray-600 transition-colors">
-                  <span className="mr-2 text-blue-500 transform group-hover:translate-x-1 transition-transform">›</span>
+              <div className="space-y-6">
+                <a href="#mission" className="group flex items-center text-xl text-gray-800 hover:text-gray-600 transition-colors">
+                  <span className="mr-4 text-blue-500 transform group-hover:translate-x-1 transition-transform">›</span>
                   Our mission and methodology
                 </a>
                 
-                <a href="#history" className="group flex items-center justify-center text-lg md:text-xl text-gray-800 hover:text-gray-600 transition-colors">
-                  <span className="mr-2 text-blue-500 transform group-hover:translate-x-1 transition-transform">›</span>
+                <a href="#history" className="group flex items-center text-xl text-gray-800 hover:text-gray-600 transition-colors">
+                  <span className="mr-4 text-blue-500 transform group-hover:translate-x-1 transition-transform">›</span>
                   View our grant-making history
                 </a>
               </div>
@@ -278,8 +249,7 @@
       );
     };
 
-    // Render the Website component into the root div
-    ReactDOM.createRoot(document.getElementById('root')).render(<Website />);
+    ReactDOM.render(<Website />, document.getElementById('root'));
   </script>
 </body>
 </html>
